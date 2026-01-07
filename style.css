@@ -6,110 +6,128 @@
 body {
   margin: 0;
   min-height: 100vh;
-  padding: 12px 8px;
-  background: #fff;
+  padding: 16px;
+  background: linear-gradient(180deg, #f4f6f8, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .app-container {
   width: 100%;
   max-width: 760px;
-  background: #fff;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
+/* Titoli */
 .h1 {
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-  font-weight: bold;
+  margin: 0 0 6px 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111;
 }
 
 .subtitle {
-  margin: 0 0 12px 0;
-  color: #222;
+  margin: 0 0 16px 0;
+  color: #555;
   font-size: 1rem;
 }
 
+/* Search box */
 .search-box {
   display: flex;
-  gap: 4px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .search-box input {
   flex: 1;
-  padding: 6px 8px;
-  border-radius: 0;
-  border: 1px solid #bbb;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   font-size: 1rem;
-  background: #fff;
+  background: #fafafa;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: #888;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 .search-box button {
-  padding: 6px 10px;
-  border: 1px solid #bbb;
-  border-radius: 0;
-  background: #eee;
-  color: #222;
-  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: #fff;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .search-box button:hover {
-  background: #ddd;
+  background: #357abd;
 }
 
+.search-box button:active {
+  transform: scale(0.96);
+}
+
+/* Errori */
 .error-message {
-  color: #c00;
-  min-height: 16px;
-  margin-bottom: 6px;
+  color: #d32f2f;
+  min-height: 18px;
+  margin-bottom: 8px;
   font-size: 0.95rem;
 }
 
+/* Weather card */
 .weather-card {
-  background: #fff;
-  border-radius: 0;
-  padding: 10px 0 0 0;
-  margin-top: 8px;
-  border: none;
+  background: #f9fbfd;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 12px;
+  border: 1px solid #e3e6ea;
 }
 
 .weather-card h2 {
-  margin: 0 0 4px 0;
-  font-size: 1rem;
-  font-weight: bold;
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111;
 }
 
 .weather-card p {
-  margin: 4px 0;
-  color: #222;
-  font-size: 0.98rem;
+  margin: 6px 0;
+  color: #444;
+  font-size: 1rem;
 }
 
+/* Meteo principale */
 .weather-main {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 6px 0 8px;
+  gap: 10px;
+  margin: 10px 0;
 }
 
 .temperature {
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4a90e2;
 }
 
 .weather-main img {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
 }
 
+/* Utility */
 .hidden {
   display: none;
 }
