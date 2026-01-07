@@ -14,7 +14,7 @@ const humidityEl = document.getElementById("humidity");
 const windEl = document.getElementById("wind");
 const weatherIconEl = document.getElementById("weatherIcon");
 
-let forecastList = [];
+let forecastList = []; //
 
 searchBtn.addEventListener("click", () => {
   const city = cityInput.value.trim();

@@ -2,7 +2,7 @@
   box-sizing: border-box;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 }
-
+/* Background gradient inspired by https://uigradients.com/#LightBlue */
 body {
   margin: 0;
   background: linear-gradient(145deg, #9ad0ff, #b9b0ff);
