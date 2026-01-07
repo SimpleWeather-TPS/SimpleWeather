@@ -9,6 +9,7 @@ Inserendo il nome di una città, l’app mostra il meteo attuale (temperatura, u
 
 Il progetto è realizzato utilizzando **HTML**, **CSS** e **JavaScript**.  
 Il browser invia richieste alle API di OpenWeather, riceve i dati in formato JSON e li elabora per mostrarli in modo chiaro e organizzato all’utente.
+Grazie a questo sistema di richieste api, riusciamo ad ottimizzare la nostra web app fornendo un servizio chiaro e completo agli utenti
 
 ---
 
