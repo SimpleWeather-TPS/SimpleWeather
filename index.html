@@ -2,52 +2,35 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimpleWeather | Meteo in tempo reale</title>
+    <title>SimpleWeather</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main class="app-container">
-        <header>
-            <h1>SimpleWeather</h1>
-            <p class="subtitle">Inserisci una città per vedere il meteo</p>
-        </header>
+    <div class="app-container">
+        <h1>SimpleWeather</h1>
+        <p class="subtitle">Inserisci una città per vedere il meteo</p>
 
-        <form class="search-box" id="weatherForm">
-            <label for="cityInput" class="visually-hidden">Nome città</label>
+        <div class="search-box">
             <input 
-                type="text"
-                id="cityInput"
-                placeholder="Es. Bergamo, Roma, Milano"
-                autocomplete="off"
-                required>
+                type="text" 
+                id="cityInput" 
+                placeholder="Es. Bergamo, Roma, Milano">
+            <button id="searchBtn">Cerca</button>
+        </div>
 
-            <button type="submit" id="searchBtn" class="btn-primary">
-                Cerca
-            </button>
-        </form>
+        <div id="errorMessage" class="error-message"></div>
 
-        <div id="errorMessage" class="error-message" aria-live="polite"></div>
-
-        <section id="weatherCard" class="weather-card hidden">
+        <div id="weatherCard" class="weather-card hidden">
             <h2 id="cityName"></h2>
             <p id="description"></p>
-
             <div class="weather-main">
                 <span id="temperature" class="temperature"></span>
-                <img id="weatherIcon" alt="Icona condizioni meteo">
+                <img id="weatherIcon" alt="Icona meteo">
             </div>
-
-            <div class="weather-details">
-                <p><strong>Umidità:</strong> <span id="humidity"></span>%</p>
-                <p><strong>Vento:</strong> <span id="wind"></span> m/s</p>
-            </div>
-        </section>
-    </main>
-
-    <footer class="app-footer">
-        <p>SimpleWeather © 2026</p>
-    </footer>
+            <p><strong>Umidità:</strong> <span id="humidity"></span>%</p>
+            <p><strong>Vento:</strong> <span id="wind"></span> m/s</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
