@@ -2,36 +2,43 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>SimpleWeather</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleWeather | Meteo in tempo reale</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <main class="app-container">
         <h1>SimpleWeather</h1>
         <p class="subtitle">Inserisci una città per vedere il meteo</p>
 
         <div class="search-box">
+            <label for="cityInput" class="visually-hidden">Nome città</label>
             <input 
                 type="text" 
                 id="cityInput" 
-                placeholder="Es. Bergamo, Roma, Milano">
+                placeholder="Es. Bergamo, Roma, Milano"
+                aria-label="Inserisci il nome della città">
             <button id="searchBtn">Cerca</button>
         </div>
 
-        <div id="errorMessage" class="error-message"></div>
+        <div id="errorMessage" class="error-message" aria-live="polite"></div>
 
-        <div id="weatherCard" class="weather-card hidden">
+        <section id="weatherCard" class="weather-card hidden">
             <h2 id="cityName"></h2>
             <p id="description"></p>
+
             <div class="weather-main">
                 <span id="temperature" class="temperature"></span>
-                <img id="weatherIcon" alt="Icona meteo">
+                <img id="weatherIcon" alt="Icona condizioni meteo">
             </div>
+
             <p><strong>Umidità:</strong> <span id="humidity"></span>%</p>
             <p><strong>Vento:</strong> <span id="wind"></span> m/s</p>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
 </html>
+
+
