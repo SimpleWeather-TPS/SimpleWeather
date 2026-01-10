@@ -5,25 +5,44 @@ on:
     branches:
       - main
 
+# permissions: id-token write is required by the deploy-pages action to obtain an OIDC token
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate config.js with API key
+      - name: Create config.js from secret
         run: |
           echo "export const API_KEY = '${{ secrets.MY_API_KEY }}';" > config.js
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: (Optional) Build step
+        run: |
+          echo "No build step for static site"
+        # If you use a build system, replace the above with your build commands, e.g.:
+        # run: npm ci; npm run build
 
-      - name: Upload artifact
+      - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
