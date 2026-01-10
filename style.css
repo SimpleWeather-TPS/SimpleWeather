@@ -172,12 +172,104 @@ header p {
 }
 
 /* ICONE METEO */
+
+/* Ingrandisci tutte le immagini meteo */
 .forecast-card img {
-  width: 38px;
+  width: 56px; /* più grande */
+  height: 56px;
   margin: 10px auto;
-  animation: floatIcon 3s ease-in-out infinite;
+  animation: floatIcon 4s ease-in-out infinite;
+  position: relative;
+  display: block;
 }
 
+/* Nuvole - movimento oscillatorio orizzontale */
+.cloud {
+  animation: cloudMove 8s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes cloudMove {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(12px); }
+}
+
+/* Pioggia - animazione gocce che cadono */
+.rain {
+  position: relative;
+}
+
+.rain::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 16px;
+  background: #3a86ff;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: rainFall 1s linear infinite;
+  transform: translateX(-50%);
+}
+
+@keyframes rainFall {
+  0% {
+    opacity: 0.7;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(24px);
+  }
+}
+
+/* Sole - effetto pulsazione luce */
+.sun {
+  animation: sunPulse 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px #ffd700);
+}
+
+@keyframes sunPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px #ffd700);
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px #ffec85);
+    transform: scale(1.1);
+  }
+}
+
+/* Neve - fiocchi che cadono */
+.snow {
+  position: relative;
+}
+
+.snow::after {
+  content: '❄';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  font-size: 18px;
+  color: #e0f0ff;
+  opacity: 0.8;
+  animation: snowFall 4s linear infinite;
+  transform: translateX(-50%);
+}
+
+@keyframes snowFall {
+  0% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(32px);
+  }
+}
+
+/* Animazione generica di leggero float */
 @keyframes floatIcon {
   0% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
