@@ -1,13 +1,13 @@
-/* BASE */
+/* ----------------- BASE ----------------- */
 * {
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
                "SF Pro Text", Inter, system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* SFONDO METEO APPLE BLU */
 body {
-  margin: 0;
   min-height: 100vh;
   background:
     radial-gradient(circle at top, rgba(255,255,255,.15), transparent 40%),
@@ -18,213 +18,165 @@ body {
       #144a9c 70%,
       #1e6bd6 100%
     );
-  color: white;
+  color: #0f172a;
+  overflow-x: hidden;
+  padding: 20px;
 }
 
-/* CONTAINER */
-.container {
-  max-width: 1100px;
+/* ----------------- CONTAINER ----------------- */
+.app-container {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 28px 24px 40px;
 }
 
-/* HEADER (APPLE STYLE) */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(18px);
-  background: rgba(10,31,68,.55);
-  border-radius: 0 0 24px 24px;
-  padding-bottom: 18px;
-}
-
+/* ----------------- HEADER ----------------- */
 header h1 {
-  margin: 0;
   font-size: 2.6rem;
   font-weight: 700;
+  color: #fff;
+  text-align: center;
 }
 
 header p {
-  margin-top: 6px;
+  text-align: center;
   font-size: 1.1rem;
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.85);
+  margin-bottom: 20px;
 }
 
-/* METEO ATTUALE */
-.current-weather {
-  margin-top: 18px;
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-
-.current-weather .temp {
-  font-size: 3.6rem;
-  font-weight: 700;
-  color: #0f172a; /* testo nero scuro per leggibilità */
-}
-
-.current-weather .details {
-  font-size: 1rem;
-  color: #0f172a; /* testo nero scuro */
-  line-height: 1.6;
-}
-
-/* SEARCH BAR – APPLE METEO */
+/* ----------------- SEARCH BAR ----------------- */
 .search-row {
-  margin: 30px auto 40px;
-  max-width: 580px;
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 22px;
+  gap: 10px;
+  margin: 20px auto 30px;
+  max-width: 600px;
+  padding: 12px 16px;
+  border-radius: 28px;
   background: rgba(255,255,255,.22);
-  backdrop-filter: blur(22px);
-  border-radius: 30px;
+  backdrop-filter: blur(16px);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.35),
-    0 20px 40px rgba(0,0,0,.35);
+    0 12px 28px rgba(0,0,0,.3);
 }
 
 .search-row input {
   flex: 1;
-  background: transparent;
+  padding: 12px 14px;
   border: none;
-  font-size: 1.15rem;
+  border-radius: 20px;
+  font-size: 1rem;
   outline: none;
-  color: #0f172a; /* nero nel campo input */
+  background: rgba(255,255,255,.1);
+  color: #0f172a;
 }
 
 .search-row input::placeholder {
-  color: rgba(15,23,42,0.5); /* placeholder nero semitrasparente */
+  color: rgba(15,23,42,0.5);
 }
 
 .search-row button {
+  padding: 12px 20px;
   border: none;
-  padding: 16px 26px;
   border-radius: 22px;
-  font-size: 1.05rem;
   font-weight: 600;
+  background: linear-gradient(180deg,#fff,#dbeafe);
   color: #0a1f44;
-  background: linear-gradient(180deg, #ffffff, #dbeafe);
   cursor: pointer;
-  box-shadow: 0 12px 26px rgba(0,0,0,.35);
-  transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 10px 24px rgba(0,0,0,.3);
+  transition: transform .15s;
 }
 
 .search-row button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(0,0,0,.45);
 }
 
-/* ERRORI */
+/* ----------------- ERRORI ----------------- */
 #errorMessage {
   color: #dc2626;
   text-align: center;
   margin-bottom: 12px;
 }
 
-/* FORECAST */
-#forecastContainer {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
-  margin-bottom: 36px;
+/* ----------------- METEO ATTUALE ----------------- */
+.weather-card {
+  background: rgba(255,255,255,.22);
+  backdrop-filter: blur(16px);
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 30px;
+  color: #0f172a;
+  text-align: center;
+  position: relative;
 }
 
-/* CARD GIORNO */
+.current-weather {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.current-weather .temperature {
+  font-size: 3.2rem;
+  font-weight: 700;
+}
+
+.current-weather .details {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ----------------- FORECAST ----------------- */
+#forecastContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+  gap: 12px;
+}
+
 .forecast-card {
   background: rgba(255,255,255,.22);
-  backdrop-filter: blur(18px);
-  border-radius: 22px;
-  padding: 20px 14px;
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 14px;
   text-align: center;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.3),
-    0 16px 32px rgba(0,0,0,.35);
   transition: transform .25s, box-shadow .25s;
-  color: #0f172a; /* testo nero scuro */
+  color: #0f172a;
 }
 
 .forecast-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 40px rgba(0,0,0,.5);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.3);
 }
 
-/* GIORNO CORRENTE */
-.forecast-card.today {
-  background: linear-gradient(180deg, #3b82f6, #1e40af);
-  color: white;
-}
-
-/* TESTI FORECAST */
-.forecast-card strong {
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.forecast-card span {
-  display: block;
-  margin-top: 6px;
-  font-size: 0.9rem;
-  color: #0f172a; /* nero per leggibilità */
-}
-
-/* ICONE METEO */
-
-/* Ingrandisci tutte le immagini meteo */
 .forecast-card img {
-  width: 56px; /* più grande */
-  height: 56px;
-  margin: 10px auto;
+  width: 50px;
+  height: 50px;
+  margin: 6px auto;
   animation: floatIcon 4s ease-in-out infinite;
-  position: relative;
-  display: block;
 }
 
-/* Nuvole - movimento oscillatorio orizzontale */
+/* ----------------- ANIMAZIONI ----------------- */
+/* Float generico icone */
+@keyframes floatIcon {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+/* Nuvole */
 .cloud {
-  animation: cloudMove 8s ease-in-out infinite;
+  animation: cloudMove 12s ease-in-out infinite;
+  display: inline-block;
   position: relative;
 }
 
 @keyframes cloudMove {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(12px); }
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(15px); }
 }
 
-/* Pioggia - animazione gocce che cadono */
-.rain {
-  position: relative;
-}
-
-.rain::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 4px;
-  height: 16px;
-  background: #3a86ff;
-  border-radius: 50%;
-  opacity: 0.7;
-  animation: rainFall 1s linear infinite;
-  transform: translateX(-50%);
-}
-
-@keyframes rainFall {
-  0% {
-    opacity: 0.7;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(24px);
-  }
-}
-
-/* Sole - effetto pulsazione luce */
+/* Sole */
 .sun {
   animation: sunPulse 3.5s ease-in-out infinite;
   filter: drop-shadow(0 0 6px #ffd700);
@@ -232,62 +184,70 @@ header p {
 
 @keyframes sunPulse {
   0%, 100% {
-    filter: drop-shadow(0 0 6px #ffd700);
     transform: scale(1);
+    filter: drop-shadow(0 0 6px #ffd700);
   }
   50% {
-    filter: drop-shadow(0 0 12px #ffec85);
     transform: scale(1.1);
+    filter: drop-shadow(0 0 12px #ffec85);
   }
 }
 
-/* Neve - fiocchi che cadono */
-.snow {
-  position: relative;
+
+/* Pioggia */
+.rain::after {
+  content:'';
+  position:absolute;
+  top:0;
+  left:50%;
+  width:3px;
+  height:16px;
+  background:#3a86ff;
+  border-radius:50%;
+  opacity:0.7;
+  animation: rainFall 0.8s linear infinite;
+  transform: translateX(-50%);
 }
 
+@keyframes rainFall {
+  0% { transform: translateX(-50%) translateY(0); opacity:0.7; }
+  100% { transform: translateX(-50%) translateY(28px); opacity:0; }
+}
+
+/* Neve */
 .snow::after {
-  content: '❄';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  font-size: 18px;
-  color: #e0f0ff;
-  opacity: 0.8;
-  animation: snowFall 4s linear infinite;
+  content:'❄';
+  position:absolute;
+  top:0;
+  left:50%;
+  font-size:16px;
+  color:#e0f0ff;
+  opacity:0.8;
+  animation: snowFall 3.5s linear infinite;
   transform: translateX(-50%);
 }
 
 @keyframes snowFall {
-  0% {
-    opacity: 0.8;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(32px);
-  }
+  0% { transform: translateX(-50%) translateY(0); opacity:0.8; }
+  100% { transform: translateX(-50%) translateY(32px); opacity:0; }
 }
 
-/* Animazione generica di leggero float */
-@keyframes floatIcon {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
-}
-
-/* TABELLA METEO */
+/* ----------------- TABELLA ORARIA ----------------- */
 table, th, td {
-  color: #0f172a !important; /* testo nero scuro */
+  color: #0f172a !important;
   border-collapse: collapse;
   border-spacing: 0;
 }
 
 th {
   font-weight: 700;
+  padding: 8px;
+}
+
+td {
+  padding: 6px 8px;
 }
 
 /* UTILITY */
-.hidden {
-  display: none;
-}
+.hidden { display:none; }
+
