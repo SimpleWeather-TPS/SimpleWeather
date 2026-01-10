@@ -32,7 +32,7 @@ jobs:
         # If you use a build system, replace the above with your build commands, e.g.:
         # run: npm ci; npm run build
 
-      - name: Diagnostic: verify config.js
+      - name: Diagnostic verify config.js
         run: |
           echo "-- current directory --"
           ls -la
