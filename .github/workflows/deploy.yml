@@ -39,7 +39,8 @@ jobs:
           echo "-- config.js info --"
           if [ -f config.js ]; then
             echo "config.js exists"
-            echo "size:" $(wc -c < config.js) "bytes"
+            # show size in bytes
+            wc -c config.js
             echo "first line (secret will be masked in logs):"
             head -n 1 config.js
           else
