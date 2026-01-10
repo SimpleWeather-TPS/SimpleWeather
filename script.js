@@ -2,6 +2,19 @@
 
 import { API_KEY } from './config.js';
 
+// Diagnostic helpful message: if the API key is missing the app will not work.
+// This block disables the search UI and shows a clear message so you can
+// quickly see on the deployed site whether the workflow actually injected
+// `config.js` with a valid key.
+if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
+  // If elements exist, show the error and disable the search button.
+  const errorMessageEl = document.getElementById("errorMessage");
+  const searchBtnEl = document.getElementById("searchBtn");
+  if (errorMessageEl) errorMessageEl.textContent = "API key mancante o non valida. Verifica la secret MY_API_KEY e che il workflow abbia generato config.js";
+  if (searchBtnEl) searchBtnEl.disabled = true;
+  console.error('API key missing - check config.js or repository secret MY_API_KEY');
+}
+
 const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
 const errorMessage = document.getElementById("errorMessage");
