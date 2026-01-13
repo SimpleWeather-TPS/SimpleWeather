@@ -7,18 +7,14 @@ import { API_KEY } from './config.js';
 // quickly see on the deployed site whether the workflow actually injected
 // `config.js` with a valid key.
 if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
-  // If elements exist, show the error and disable the search button.
-  const errorMessageEl = document.getElementById("errorMessage");
-  const searchBtnEl = document.getElementById("searchBtn");
-  if (errorMessageEl) errorMessageEl.textContent = "API key mancante o non valida. Verifica la secret MY_API_KEY e che il workflow abbia generato config.js";
-  if (searchBtnEl) searchBtnEl.disabled = true;
+  showError("API key mancante o non valida. Verifica la configurazione.");
+  searchBtn.disabled = true;
   console.error('API key missing - check config.js or repository secret MY_API_KEY');
 }
 
 const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
 const errorMessage = document.getElementById("errorMessage");
-
 const weatherCard = document.getElementById("weatherCard");
 const cityNameEl = document.getElementById("cityName");
 const descriptionEl = document.getElementById("description");
@@ -28,13 +24,32 @@ const windEl = document.getElementById("wind");
 const weatherIconEl = document.getElementById("weatherIcon");
 
 let forecastList = []; 
+let debounceTimer;
 
-searchBtn.addEventListener("click", () => {
-  const city = cityInput.value.trim();
-  if (!city) return showError("Inserisci una città.");
-  loadData(city);
+// Event Listeners
+searchBtn.addEventListener("click", handleSearch);
+cityInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    handleSearch();
+  }
 });
 
+/* ---------------- HANDLERS ---------------- */
+function handleSearch() {
+  const city = cityInput.value.trim();
+  if (!city) {
+    showError("Inserisci il nome di una città.");
+    return;
+  }
+  loadData(city);
+}
+function setLoadingState(isLoading) {
+  searchBtn.disabled = isLoading;
+  searchBtn.textContent = isLoading ? "Caricamento..." : "Cerca";
+  if (isLoading) {
+    weatherCard.classList.add("hidden");
+  }
+}
 cityInput.addEventListener("keyup", e => e.key === "Enter" && searchBtn.click());
 
 /* ---------------- CARICA TUTTO ---------------- */
@@ -42,35 +57,34 @@ async function loadData(city) {
   clearError();
   weatherCard.classList.add("hidden");
 
-  try {
-    // meteo attuale
-    const curUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-      city
-    )}&appid=${API_KEY}&units=metric&lang=it`;
+try {
+    const currentUrl = `${API_BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric&lang=it`;
+    const forecastUrl = `${API_BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric&lang=it`;
 
-    // previsioni 5 giorni (ogni 3 ore)
-    const foreUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-      city
-    )}&appid=${API_KEY}&units=metric&lang=it`;
-
-    const [curRes, foreRes] = await Promise.all([
-      fetch(curUrl),
-      fetch(foreUrl)
+    const [currentRes, forecastRes] = await Promise.all([
+      fetch(currentUrl),
+      fetch(forecastUrl)
     ]);
 
-    if (!curRes.ok) throw new Error("Errore meteo attuale");
-    if (!foreRes.ok) throw new Error("Errore previsioni");
+    if (!currentRes.ok) {
+      throw new Error(currentRes.status === 404 ? "Città non trovata" : "Errore nel recupero dei dati meteo");
+    }
+    if (!forecastRes.ok) {
+      throw new Error("Errore nel recupero delle previsioni");
+    }
 
-    const current = await curRes.json();
-    const forecast = await foreRes.json();
+    const current = await currentRes.json();
+    const forecast = await forecastRes.json();
 
     forecastList = forecast.list;
 
     renderCurrent(current);
     renderDaily(forecast);
   } catch (err) {
-    console.error(err);
-    showError("Errore nel recupero dei dati meteo.");
+    console.error("Errore caricamento dati:", err);
+    showError(err.message || "Errore nel recupero dei dati meteo.");
+  } finally {
+    setLoadingState(false);
   }
 }
 
@@ -188,3 +202,4 @@ function showHourly(items) {
 /* ---------------- UTILITY ---------------- */
 function showError(msg){ errorMessage.textContent = msg; }
 function clearError(){ errorMessage.textContent = ""; }
+
