@@ -1,0 +1,14 @@
+{
+  "name": "simpleweather",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SimpleWeather static app with OpenWeather API",
+  "scripts": {
+    "generate:config": "node scripts/generate-config.js",
+    "dev": "npm run generate:config && npx serve -l 4173 ."
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "serve": "^14.2.3"
+  }
+}

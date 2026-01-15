@@ -1,2 +1,5 @@
-# File di configurazione con chiavi API
+node_modules/
+.env
+.env.local
 config.js
+npm-debug.log*
