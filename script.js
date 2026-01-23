@@ -1,6 +1,6 @@
 /* SIMPLE WEATHER — REALISTICO */
 
-const API_KEY = "219c20aad794980966e8cf5dd06566ec";
+const API_KEY = window.API_KEY;
 
 const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -36,6 +36,11 @@ cityInput.addEventListener("keyup", e => {
 /* ---------------- CARICA DATI ---------------- */
 async function loadData(city) {
   clearError();
+
+  if (!API_KEY) {
+    showError("API key mancante. Genera config.js con scripts/generate-config.js.");
+    return;
+  }
   
   // Reset interfaccia durante caricamento
   weatherCard.classList.add("hidden");
