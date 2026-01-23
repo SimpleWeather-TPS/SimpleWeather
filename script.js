@@ -2,12 +2,12 @@
 
 const API_KEY = window.API_KEY;
 
+/* ================= ELEMENTI DOM ================= */
 const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
 const errorMessage = document.getElementById("errorMessage");
 const loader = document.getElementById("loader");
 
-// Elementi sfondo
 const bgImage = document.getElementById("bg-image");
 const bgOverlay = document.getElementById("bg-overlay");
 
@@ -22,38 +22,112 @@ const weatherIconEl = document.getElementById("weatherIcon");
 let forecastList = [];
 let activeCard = null;
 
-/* ---------------- EVENTI ---------------- */
+/* ================= AUTOCOMPLETE ================= */
+const searchBox = document.querySelector(".search-box");
+
+const suggestionsBox = document.createElement("div");
+suggestionsBox.className = "suggestions-box hidden";
+searchBox.appendChild(suggestionsBox);
+
+let debounceTimer = null;
+
+/* ================= EVENTI ================= */
 searchBtn.addEventListener("click", () => {
   const city = cityInput.value.trim();
   if (!city) return showError("Inserisci una città.");
-  loadData(city);
+  loadDataByName(city);
 });
 
 cityInput.addEventListener("keyup", e => {
   if (e.key === "Enter") searchBtn.click();
 });
 
-/* ---------------- CARICA DATI ---------------- */
-async function loadData(city) {
-  clearError();
-
-  if (!API_KEY) {
-    showError("API key mancante. Genera config.js con scripts/generate-config.js.");
+cityInput.addEventListener("input", () => {
+  const query = cityInput.value.trim();
+  if (query.length < 2) {
+    suggestionsBox.classList.add("hidden");
     return;
   }
-  
-  // Reset interfaccia durante caricamento
+
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
+});
+
+document.addEventListener("click", e => {
+  if (!searchBox.contains(e.target)) {
+    suggestionsBox.classList.add("hidden");
+  }
+});
+
+/* ================= SUGGERIMENTI ================= */
+async function fetchSuggestions(query) {
+  try {
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+      query
+    )}&limit=5&appid=${API_KEY}`;
+
+    const res = await fetch(url);
+    if (!res.ok) return;
+
+    const data = await res.json();
+    if (!data.length) {
+      suggestionsBox.classList.add("hidden");
+      return;
+    }
+
+    suggestionsBox.innerHTML = "";
+    data.forEach(city => {
+      const item = document.createElement("div");
+      item.className = "suggestion-item";
+      item.textContent = `${city.name}${city.state ? ", " + city.state : ""}, ${city.country}`;
+
+      item.addEventListener("click", () => {
+        cityInput.value = item.textContent;
+        suggestionsBox.classList.add("hidden");
+        loadDataByCoords(city.lat, city.lon);
+      });
+
+      suggestionsBox.appendChild(item);
+    });
+
+    suggestionsBox.classList.remove("hidden");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/* ================= CARICAMENTO DATI ================= */
+async function loadDataByName(city) {
+  clearError();
   weatherCard.classList.add("hidden");
-  loader.classList.remove("hidden"); // Mostra loader
+  loader.classList.remove("hidden");
 
   try {
-    const curUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
       city
-    )}&appid=${API_KEY}&units=metric&lang=it`;
+    )}&limit=1&appid=${API_KEY}`;
 
-    const foreUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-      city
-    )}&appid=${API_KEY}&units=metric&lang=it`;
+    const geoRes = await fetch(geoUrl);
+    if (!geoRes.ok) throw new Error();
+
+    const geoData = await geoRes.json();
+    if (!geoData.length) throw new Error();
+
+    loadDataByCoords(geoData[0].lat, geoData[0].lon);
+  } catch {
+    showError("Città non trovata.");
+    loader.classList.add("hidden");
+  }
+}
+
+async function loadDataByCoords(lat, lon) {
+  clearError();
+  weatherCard.classList.add("hidden");
+  loader.classList.remove("hidden");
+
+  try {
+    const curUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
+    const foreUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
 
     const [curRes, foreRes] = await Promise.all([
       fetch(curUrl),
@@ -67,32 +141,27 @@ async function loadData(city) {
 
     forecastList = forecast.list;
 
-    // Imposta sfondo iniziale
     updateBackground(current.weather[0].main);
-
     renderCurrent(current);
     renderDaily();
-
-  } catch (error) {
-    showError("Città non trovata. Controlla il nome.");
+  } catch {
+    showError("Errore nel recupero dei dati meteo.");
   } finally {
-    // Nascondi SEMPRE il loader alla fine
-    loader.classList.add("hidden"); 
+    loader.classList.add("hidden");
   }
 }
 
-/* ---------------- METEO ATTUALE ---------------- */
+/* ================= METEO ATTUALE ================= */
 function renderCurrent(cur) {
   cityNameEl.textContent = `${cur.name}, ${cur.sys.country}`;
   descriptionEl.textContent = capitalize(cur.weather[0].description);
   temperatureEl.textContent = `${Math.round(cur.main.temp)}°`;
   humidityEl.textContent = cur.main.humidity;
   windEl.textContent = cur.wind.speed;
-
   weatherIconEl.src = `https://openweathermap.org/img/wn/${cur.weather[0].icon}@4x.png`;
 }
 
-/* ---------------- PREVISIONI GIORNALIERE ---------------- */
+/* ================= PREVISIONI GIORNALIERE ================= */
 function renderDaily() {
   document.getElementById("forecastContainer")?.remove();
   document.getElementById("hourlyTable")?.remove();
@@ -111,19 +180,18 @@ function renderDaily() {
 
   dates.forEach((dateStr, index) => {
     const items = days[dateStr];
-    const midDayItem = items[Math.floor(items.length / 2)];
+    const mid = items[Math.floor(items.length / 2)];
     const temps = items.map(i => i.main.temp);
-    
+
     const d = new Date(dateStr);
     const isToday = d.toDateString() === new Date().toDateString();
-    const dayLabel = isToday ? "Oggi" : d.toLocaleDateString("it-IT", { weekday: "short" });
+    const label = isToday ? "Oggi" : d.toLocaleDateString("it-IT", { weekday: "short" });
 
     const card = document.createElement("div");
     card.className = "forecast-card";
-
     card.innerHTML = `
-      <strong>${capitalize(dayLabel)}</strong><br>
-      <img src="https://openweathermap.org/img/wn/${midDayItem.weather[0].icon}.png" width="40">
+      <strong>${capitalize(label)}</strong><br>
+      <img src="https://openweathermap.org/img/wn/${mid.weather[0].icon}.png" width="40">
       <div>${Math.round(Math.min(...temps))}° / ${Math.round(Math.max(...temps))}°</div>
     `;
 
@@ -132,8 +200,7 @@ function renderDaily() {
       activeCard?.classList.remove("active");
       card.classList.add("active");
       activeCard = card;
-      
-      updateBackground(midDayItem.weather[0].main);
+      updateBackground(mid.weather[0].main);
       showHourly(items);
     });
 
@@ -146,42 +213,31 @@ function renderDaily() {
 
   weatherCard.appendChild(container);
   weatherCard.classList.remove("hidden");
-
   showHourly(days[dates[0]]);
 }
 
-/* ---------------- TABELLA ORARIA ---------------- */
+/* ================= TABELLA ORARIA ================= */
 function showHourly(items) {
   document.getElementById("hourlyTable")?.remove();
 
   const table = document.createElement("table");
   table.id = "hourlyTable";
-
   table.innerHTML = `
     <thead>
-      <tr>
-        <th>Ora</th>
-        <th>Meteo</th>
-        <th>Temp</th>
-        <th>Vento</th>
-      </tr>
+      <tr><th>Ora</th><th>Meteo</th><th>Temp</th><th>Vento</th></tr>
     </thead>
     <tbody></tbody>
   `;
 
   const tbody = table.querySelector("tbody");
-  
   items.slice(0, 8).forEach(h => {
     const t = new Date(h.dt * 1000);
-    const hour = t.getHours().toString().padStart(2, '0') + ":00";
-    
+    const hour = t.getHours().toString().padStart(2, "0") + ":00";
+
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${hour}</td>
-      <td style="display:flex; align-items:center; justify-content:center; gap:5px;">
-        <img src="https://openweathermap.org/img/wn/${h.weather[0].icon}.png" width="30">
-        ${capitalize(h.weather[0].description)}
-      </td>
+      <td><img src="https://openweathermap.org/img/wn/${h.weather[0].icon}.png" width="30"> ${capitalize(h.weather[0].description)}</td>
       <td><strong>${Math.round(h.main.temp)}°</strong></td>
       <td>${h.wind.speed} m/s</td>
     `;
@@ -191,61 +247,41 @@ function showHourly(items) {
   document.getElementById("forecastContainer").after(table);
 }
 
-/* ---------------- SFONDI REALISTICI (FOTO + OVERLAY) ---------------- */
-function updateBackground(weatherMain) {
-  // Rimuovi tutte le classi precedenti
+/* ================= SFONDI ================= */
+function updateBackground(main) {
   bgImage.className = "bg-layer";
   bgOverlay.className = "overlay-layer";
 
-  const condition = weatherMain.toLowerCase();
-
-  // Logica selezione classi
-  if (condition.includes("clear")) {
-    bgImage.classList.add("bg-sunny");
-    bgOverlay.classList.add("sun-overlay"); // Effetto luce
-  } 
-  else if (condition.includes("cloud")) {
-    bgImage.classList.add("bg-cloudy");
-    // Nessun overlay speciale, solo foto nuvolosa
-  } 
-  else if (condition.includes("rain") || condition.includes("drizzle")) {
+  const c = main.toLowerCase();
+  if (c.includes("clear")) bgImage.classList.add("bg-sunny");
+  else if (c.includes("cloud")) bgImage.classList.add("bg-cloudy");
+  else if (c.includes("rain")) {
     bgImage.classList.add("bg-rainy");
-    bgOverlay.classList.add("rain-overlay"); // Pioggia CSS
-  } 
-  else if (condition.includes("snow")) {
+    bgOverlay.classList.add("rain-overlay");
+  } else if (c.includes("snow")) {
     bgImage.classList.add("bg-snowy");
-    bgOverlay.classList.add("snow-overlay"); // Neve CSS
-  } 
-  else if (condition.includes("thunder")) {
-  bgImage.classList.add("bg-thunder");
-  bgOverlay.classList.add("rain-overlay");
-
-  setInterval(() => {
-    bgOverlay.classList.add("flash-overlay");
-    setTimeout(() => bgOverlay.classList.remove("flash-overlay"), 150);
-  }, Math.random() * 6000 + 4000);
-}
-
-  else {
-    bgImage.classList.add("bg-cloudy"); // Default
+    bgOverlay.classList.add("snow-overlay");
+  } else if (c.includes("thunder")) {
+    bgImage.classList.add("bg-thunder");
+    bgOverlay.classList.add("rain-overlay");
   }
 }
 
-/* ---------------- UTILITY ---------------- */
+/* ================= UTILITY ================= */
 function showError(msg) {
   errorMessage.textContent = msg;
-  errorMessage.classList.remove("hidden"); // Mostra esplicitamente
+  errorMessage.classList.remove("hidden");
   weatherCard.classList.add("hidden");
-  loader.classList.add("hidden");
 }
 
 function clearError() {
-  errorMessage.textContent = "";
-  errorMessage.classList.add("hidden"); // Nascondi
+  errorMessage.classList.add("hidden");
 }
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
 
 
