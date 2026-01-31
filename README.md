@@ -28,7 +28,7 @@ Ogni componente ha avuto un ruolo preciso.
 Si è occupato di pianificare il lavoro, assegnare compiti, controllare le scadenze e comunicare con il docente.
 Ha gestito le chiamate alle API, la lettura dei JSON e la preparazione dei dati per il frontend.
 
-**Frontend Developer (ANDREA IVAN LOCATELLI/ MIOLA LORENZO) — interfaccia e grafica**  
+**Frontend Developer/Backend Developer (ANDREA IVAN LOCATELLI/ MIOLA LORENZO) — interfaccia e grafica**  
 Hanno curato layout, colori, struttura della pagina e usabilità del sito.
 
 **Tester / Documentazione (MEDICI LEONARDO) — controllo qualità e scrittura documenti**  
